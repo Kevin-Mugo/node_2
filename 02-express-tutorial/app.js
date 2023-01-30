@@ -1,9 +1,19 @@
-const http = require('http');
+const express =  require ('express');
+const path = require('path');
 
-const server = http.createServer((req,res) => {
- res.writeHead(200 , {'content-type' : 'text/html'})
- res.write('<h1>Home page</h1>');
- res.end();
+const app = express();
+
+//set up static and middleware
+
+app.use(express.static('./public'))
+
+/*app.get('/' , (req,res) => {
+res.sendFile(path.resolve(__dirname,'./navbar-app/index.html'))
+}) */
+
+app.all('*' , (req,res) => {
+   res.status(404).send('resource not found')
 })
-
-server.listen(5000);
+app.listen(5000, ()=>{
+   console.log('Server listening to port 5000...')
+});
