@@ -1,19 +1,37 @@
-const express =  require ('express');
-const path = require('path');
-
+const express =  require('express');
 const app = express();
 
-//set up static and middleware
+const {products} = require('./data');
 
-app.use(express.static('./public'))
+app.get('/' , (req,res)=>{
+ res.send('<h1>Home page </h1> <a href="/api/products" > Products</a>' );
+});
 
-/*app.get('/' , (req,res) => {
-res.sendFile(path.resolve(__dirname,'./navbar-app/index.html'))
-}) */
-
-app.all('*' , (req,res) => {
-   res.status(404).send('resource not found')
+app.get('/api/products' , (req,res)=>{
+ const newProducts = products.map((product ) => {
+   const {id,name,image} = product;
+   return {id,name,image};
+ })
+ res.json(newProducts);
 })
-app.listen(5000, ()=>{
+
+  app.get('/api/products/:productID' , (req,res)=>{
+
+   //console.log(req);
+   //console.log(req.params);
+
+   const {productID} = req.params;
+
+   const singleProduct = products.find((product) => 
+      product.id === Number(productID)
+   )
+  if(!singleProduct){
+   return res.status(404).send('Product not found');
+  }
+    return res.json(singleProduct);
+  })
+  
+
+app.listen(5000 ,()=>{
    console.log('Server listening to port 5000...')
 });
